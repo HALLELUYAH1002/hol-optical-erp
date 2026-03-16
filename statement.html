@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="mb-0">Customer Statement</h2>
+    <small class="text-muted">{{ customer.full_name }} · {{ customer.phone or 'No phone' }}</small>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary" onclick="window.print()">Print Statement</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('customers.index') }}">Back</a>
+  </div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card dashboard-card"><div class="card-body"><div class="text-muted">Total Sales</div><div class="fs-4 fw-bold">{{ money(total_sales) }}</div></div></div></div>
+  <div class="col-md-4"><div class="card dashboard-card"><div class="card-body"><div class="text-muted">Total Paid</div><div class="fs-4 fw-bold text-success">{{ money(total_paid) }}</div></div></div></div>
+  <div class="col-md-4"><div class="card dashboard-card"><div class="card-body"><div class="text-muted">Outstanding Balance</div><div class="fs-4 fw-bold text-danger">{{ money(total_balance) }}</div></div></div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header">Sales History</div>
+      <div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Invoice</th><th>Total</th><th>Paid</th><th>Balance</th></tr></thead><tbody>{% for sale in sales %}<tr><td>{{ sale.invoice_no }}</td><td>{{ money(sale.total) }}</td><td>{{ money(sale.amount_paid) }}</td><td>{{ money(sale.balance) }}</td></tr>{% else %}<tr><td colspan="4" class="text-center text-muted">No sales yet.</td></tr>{% endfor %}</tbody></table></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">Payments</div>
+      <div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Date</th><th>Amount</th><th>Method</th></tr></thead><tbody>{% for payment in payments %}<tr><td>{{ payment.created_at.strftime('%Y-%m-%d %H:%M') if payment.created_at else '-' }}</td><td>{{ money(payment.amount) }}</td><td>{{ payment.payment_method }}</td></tr>{% else %}<tr><td colspan="3" class="text-center text-muted">No payments yet.</td></tr>{% endfor %}</tbody></table></div>
+    </div>
+    <div class="card shadow-sm">
+      <div class="card-header">Open Debts</div>
+      <div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Invoice</th><th>Due Date</th><th>Balance</th><th>Status</th></tr></thead><tbody>{% for debt in open_debts %}<tr><td>{{ debt.sale.invoice_no }}</td><td>{{ debt.due_date or '-' }}</td><td>{{ money(debt.balance) }}</td><td>{{ debt.status }}</td></tr>{% else %}<tr><td colspan="4" class="text-center text-muted">No open debts.</td></tr>{% endfor %}</tbody></table></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

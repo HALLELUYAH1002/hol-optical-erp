@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header">Edit Customer</div>
+  <div class="card-body">
+    <form method="post" class="row g-3">
+      <div class="col-md-4"><label class="form-label">Customer Code</label><input class="form-control" name="customer_code" value="{{ customer.customer_code or '' }}"></div>
+      <div class="col-md-8"><label class="form-label">Full Name</label><input class="form-control" name="full_name" value="{{ customer.full_name }}" required></div>
+      <div class="col-md-4"><label class="form-label">Phone</label><input class="form-control" name="phone" value="{{ customer.phone or '' }}"></div>
+      <div class="col-md-4"><label class="form-label">WhatsApp</label><input class="form-control" name="whatsapp" value="{{ customer.whatsapp or '' }}"></div>
+      <div class="col-md-4"><label class="form-label">Gender</label><select class="form-select" name="gender"><option value="">-</option><option {% if customer.gender=='Male' %}selected{% endif %}>Male</option><option {% if customer.gender=='Female' %}selected{% endif %}>Female</option></select></div>
+      <div class="col-md-6"><label class="form-label">Address</label><input class="form-control" name="address" value="{{ customer.address or '' }}"></div>
+      <div class="col-md-3"><label class="form-label">Occupation</label><input class="form-control" name="occupation" value="{{ customer.occupation or '' }}"></div>
+      <div class="col-md-3"><label class="form-label">Customer Type</label><select class="form-select" name="customer_type"><option {% if customer.customer_type=='Retail' %}selected{% endif %}>Retail</option><option {% if customer.customer_type=='Wholesale' %}selected{% endif %}>Wholesale</option></select></div>
+      <div class="col-12"><label class="form-label">Notes</label><textarea class="form-control" name="notes">{{ customer.notes or '' }}</textarea></div>
+      <div class="col-12 d-flex gap-2"><button class="btn btn-primary">Update</button><a class="btn btn-outline-secondary" href="{{ url_for('customers.index') }}">Back</a></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

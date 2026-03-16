@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-xl-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header">Quick Add Customer</div>
+      <div class="card-body">
+        <form method="post" class="row g-2">
+          <div class="col-12"><label class="form-label">Customer Code</label><input class="form-control" name="customer_code" placeholder="Optional"></div>
+          <div class="col-12"><label class="form-label">Full Name</label><input class="form-control" name="full_name" required></div>
+          <div class="col-md-6"><label class="form-label">Phone</label><input class="form-control" name="phone"></div>
+          <div class="col-md-6"><label class="form-label">WhatsApp</label><input class="form-control" name="whatsapp"></div>
+          <div class="col-12"><label class="form-label">Address</label><input class="form-control" name="address"></div>
+          <div class="col-md-6"><label class="form-label">Gender</label><select class="form-select" name="gender"><option value="">-</option><option>Male</option><option>Female</option></select></div>
+          <div class="col-md-6"><label class="form-label">Occupation</label><input class="form-control" name="occupation"></div>
+          <div class="col-12"><label class="form-label">Customer Type</label><select class="form-select" name="customer_type"><option>Retail</option><option>Wholesale</option></select></div>
+          <div class="col-12"><label class="form-label">Notes</label><textarea class="form-control" rows="2" name="notes"></textarea></div>
+          <div class="col-12"><button class="btn btn-primary w-100">Save Customer</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-8">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span>Customers</span>
+        <form method="get" class="row g-2 align-items-center">
+          <div class="col-auto"><input class="form-control form-control-sm" name="q" value="{{ q }}" placeholder="Search name, phone, code"></div>
+          <div class="col-auto"><select class="form-select form-select-sm" name="customer_type"><option value="">All types</option><option value="Retail" {% if customer_type=='Retail' %}selected{% endif %}>Retail</option><option value="Wholesale" {% if customer_type=='Wholesale' %}selected{% endif %}>Wholesale</option></select></div>
+          <div class="col-auto"><button class="btn btn-sm btn-outline-secondary">Filter</button></div>
+        </form>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm align-middle mb-0">
+          <thead><tr><th>Code</th><th>Name</th><th>Phone</th><th>Type</th><th>Balance</th><th></th></tr></thead>
+          <tbody>
+            {% for customer in customers %}
+            <tr>
+              <td>{{ customer.customer_code or '-' }}</td>
+              <td>
+                <div class="fw-semibold">{{ customer.full_name }}</div>
+                <div class="small text-muted">{{ customer.whatsapp or customer.address or '' }}</div>
+              </td>
+              <td>{{ customer.phone or '-' }}</td>
+              <td><span class="badge text-bg-light border">{{ customer.customer_type }}</span></td>
+              <td class="{% if debtor_map.get(customer.id, 0) %}text-danger fw-semibold{% endif %}">{{ money(debtor_map.get(customer.id, 0)) }}</td>
+              <td class="text-end text-nowrap">
+                <a class="btn btn-sm btn-outline-dark" href="{{ url_for('sales.new_sale', customer_id=customer.id) }}">Sell</a>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('customers.statement', customer_id=customer.id) }}">Statement</a>
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('customers.edit_customer', customer_id=customer.id) }}">Edit</a>
+                <form method="post" action="{{ url_for('customers.delete_customer', customer_id=customer.id) }}" class="d-inline">
+                  <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this customer?')">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No customers found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
